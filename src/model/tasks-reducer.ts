@@ -1,6 +1,7 @@
 import {v1} from 'uuid'
-import type {Task, TasksState} from '../App'
+
 import type {CreateTodolistAction, DeleteTodolistAction} from './todolists-reducer'
+import {Task, TasksState} from "../app/App.tsx";
 
 const initialState: TasksState = {}
 
