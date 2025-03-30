@@ -47,10 +47,9 @@ export type TasksState = Record<string, Task[]>
 type ThemeMode = 'dark' | 'light'
 
 
-
 export const App = () => {
     const todolists = useAppSelector(selectTodolists)
-    const tasks  = useAppSelector(selectTasks)
+    const tasks = useAppSelector(selectTasks)
     const dispatch = useAppDispatch()
 
     const [themeMode, setThemeMode] = useState<ThemeMode>('light')
@@ -77,7 +76,7 @@ export const App = () => {
     }
 
     const deleteTodolist = (todolistId: string) => {
-        dispatch(deleteTodolistAC(todolistId))
+        dispatch(deleteTodolistAC({id: todolistId}))
     }
 
     const changeTodolistTitle = (todolistId: string, title: string) => {
