@@ -6,10 +6,6 @@ import {
     changeTaskTitleAC,
     createTaskAC, deleteTaskAC,
 } from '../model/tasks-reducer.ts'
-import {
-    changeTodolistFilterAC,
-    changeTodolistTitleAC, createTodolistAC, deleteTodolistAC,
-} from '../model/todolists-reducer.ts'
 import {TodolistItem} from '../TodolistItem.tsx'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
@@ -22,14 +18,19 @@ import Switch from '@mui/material/Switch'
 import CssBaseline from '@mui/material/CssBaseline'
 import {containerSx} from '../TodolistItem.styles.ts'
 import {NavButton} from '../NavButton.ts'
-import {useAppDispatch} from "../common/hooks/useAppDispatch.ts";
-import {selectTodolists} from "../model/todolists-selectors.ts";
-import {selectTasks} from "../model/tasks-selectors.ts";
-
 import {changeThemeModeAC} from "./app-reducer.ts";
-import {useAppSelector} from "../common/hooks/useAppSelector.ts";
 import {selectThemeMode} from "./app-selectors.ts";
-import {getTheme} from "../common/theme/theme.ts";
+import {useAppDispatch} from "@/common/hooks/useAppDispatch.ts";
+import {getTheme} from "@/common/theme/theme.ts";
+import {useAppSelector} from "@/common/hooks/useAppSelector.ts";
+import {selectTasks} from "@/model/tasks-selectors.ts";
+import {selectTodolists} from "@/model/todolists-selectors.ts";
+import {
+    changeTodolistFilterAC,
+    changeTodolistTitleAC,
+    createTodolistAC,
+    deleteTodolistAC
+} from "@/model/todolists-reducer.ts";
 
 export type Todolist = {
     id: string

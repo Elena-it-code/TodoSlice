@@ -2,7 +2,7 @@ import {
     createTodolistAC,
     deleteTodolistAC,
 } from './todolists-reducer'
-import {Task, TasksState} from "../app/App.tsx";
+import {Task, TasksState} from "@/app/App.tsx";
 import {createAction, createReducer, nanoid} from "@reduxjs/toolkit";
 
 
