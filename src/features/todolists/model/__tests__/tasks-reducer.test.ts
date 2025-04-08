@@ -4,10 +4,10 @@ import {
     changeTaskStatusAC, changeTaskTitleAC,
     createTaskAC,
     deleteTaskAC,
-    tasksReducer
-} from './tasks-reducer'
-import {createTodolistAC, deleteTodolistAC} from './todolists-reducer'
-import {TasksState} from "../app/App.tsx";
+    tasksReducer, TasksState
+} from '../tasks-reducer.ts'
+import {createTodolistAC, deleteTodolistAC} from '../todolists-reducer.ts'
+
 
 let startState: TasksState = {}
 

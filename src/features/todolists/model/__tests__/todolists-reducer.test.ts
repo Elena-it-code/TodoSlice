@@ -4,10 +4,10 @@ import {
     changeTodolistFilterAC,
     changeTodolistTitleAC,
     createTodolistAC,
-    deleteTodolistAC,
+    deleteTodolistAC, Todolist,
     todolistsReducer
-} from './todolists-reducer'
-import {Todolist} from "../app/App.tsx";
+} from '../todolists-reducer.ts'
+
 import {nanoid} from "@reduxjs/toolkit";
 
 let todolistId1: string
