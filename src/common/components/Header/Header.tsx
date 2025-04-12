@@ -4,13 +4,12 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Switch from "@mui/material/Switch";
 import AppBar from "@mui/material/AppBar";
-import {useAppSelector} from "@/common/hooks/useAppSelector.ts";
 import {selectThemeMode} from "@/app/app-selectors.ts";
-import {getTheme} from "@/common/theme/theme.ts";
+import {getTheme} from "@/common/theme";
 import {changeThemeModeAC} from "@/app/app-reducer.ts";
-import {useAppDispatch} from "@/common/hooks/useAppDispatch.ts";
-import {containerSx} from "@/common/styles/container.styles.ts";
+import {containerSx} from "@/common/styles";
 import {NavButton} from "@/common/components";
+import {useAppDispatch, useAppSelector} from "@/common/hooks";
 
 
 export const Header = () => {

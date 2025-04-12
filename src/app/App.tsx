@@ -1,11 +1,11 @@
 import './App.css'
 import {ThemeProvider} from '@mui/material/styles'
-import {Header} from "@/common/components/Header/Header.tsx";
-import {getTheme} from "@/common/theme/theme.ts";
+import {getTheme} from "@/common/theme";
 import {selectThemeMode} from "@/app/app-selectors.ts";
 import {Main} from "@/app/Main.tsx";
-import {useAppSelector} from "@/common/hooks/useAppSelector.ts";
 import {CssBaseline} from "@mui/material";
+import {useAppSelector} from "@/common/hooks";
+import {Header} from "@/common/components";
 
 
 export const App = () => {
