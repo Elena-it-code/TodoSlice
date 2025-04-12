@@ -1,9 +1,8 @@
 import {type ChangeEvent, type CSSProperties, useEffect, useState} from 'react'
 import Checkbox from '@mui/material/Checkbox'
-
 import {CreateItemForm, EditableSpan} from "@/common/components";
-import {BaseResponse} from "@/common/types";
-import {instance} from "@/common/instance/instance.ts";
+import {Todolist} from "@/features/todolists/api/todolistsApi.types.ts";
+import {todolistApi} from "@/features/todolists/api/todolistApi.ts";
 
 
 export const AppHttpRequests = () => {
@@ -11,12 +10,11 @@ export const AppHttpRequests = () => {
     const [tasks, setTasks] = useState<any>({})
 
     useEffect(() => {
-        instance.get<Todolist[]>('/todo-lists')
-            .then(res => setTodolists(res.data))
+        todolistApi.getTodolists().then(res => setTodolists(res.data))
     }, [])
 
     const createTodolist = (title: string) => {
-        instance.post<BaseResponse<{ item: Todolist }>>('/todo-lists', {title})
+        todolistApi.createTodolist(title)
             .then(res => {
                 const todolist = res.data.data.item
                 setTodolists([todolist, ...todolists])
@@ -24,14 +22,14 @@ export const AppHttpRequests = () => {
     }
 
     const deleteTodolist = (id: string) => {
-        instance.delete<BaseResponse>(`/todo-lists/${id}`)
+        todolistApi.deleteTodolist(id)
             .then(() => {
                 setTodolists(todolists.filter(tl => tl.id !== id))
             })
     }
 
     const changeTodolistTitle = (id: string, title: string) => {
-        instance.put<BaseResponse>(`/todo-lists/${id}`, {title})
+        todolistApi.changeTodolistTitle({id, title})
             .then(() => {
                 setTodolists(todolists.map(todolist => todolist.id === id ? {...todolist, title} : todolist))
             })
@@ -83,11 +81,4 @@ const container: CSSProperties = {
     display: 'flex',
     justifyContent: 'space-between',
     flexDirection: 'column',
-}
-
-export type Todolist = {
-    addedDate: string
-    id: string
-    order: number
-    title: string
 }
