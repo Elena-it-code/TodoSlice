@@ -17,7 +17,8 @@ export const AppHttpRequests = () => {
       setTodolists(todolists)
       todolists.forEach((todolist) => {
         tasksApi.getTasks(todolist.id).then((res) => {
-          setTasks({ ...tasks, [todolist.id]: res.data.items })
+          setTasks((prevTasksState) => ({ ...prevTasksState, [todolist.id]: res.data.items }))
+          //setTasks({ ...tasks, [todolist.id]: res.data.items })
         })
       })
     })
@@ -48,7 +49,11 @@ export const AppHttpRequests = () => {
     })
   }
 
-  const deleteTask = (todolistId: string, taskId: string) => {}
+  const deleteTask = (todolistId: string, taskId: string) => {
+    tasksApi.deleteTask({ todolistId, taskId }).then(() => {
+      setTasks({ ...tasks, [todolistId]: tasks[todolistId].filter((task) => task.id !== taskId) })
+    })
+  }
 
   const changeTaskStatus = (e: ChangeEvent<HTMLInputElement>, task: DomainTask) => {
     const model: UpdateTaskModel = {
@@ -60,7 +65,7 @@ export const AppHttpRequests = () => {
       status: e.currentTarget.checked ? TaskStatus.Completed : TaskStatus.New,
     }
 
-    tasksApi.changeTaskStatus({ todolistId: task.todoListId, taskId: task.id, model }).then((res) => {
+    tasksApi.updateTask({ todolistId: task.todoListId, taskId: task.id, model }).then((res) => {
       setTasks({
         ...tasks,
         [task.todoListId]: tasks[task.todoListId].map((el) => (el.id === task.id ? res.data.data.item : el)),
@@ -68,7 +73,23 @@ export const AppHttpRequests = () => {
     })
   }
 
-  const changeTaskTitle = (task: any, title: string) => {}
+  const changeTaskTitle = (task: any, title: string) => {
+    const model: UpdateTaskModel = {
+      description: task.description,
+      title,
+      priority: task.priority,
+      startDate: task.startDate,
+      deadline: task.deadline,
+      status: task.status,
+    }
+
+    tasksApi.updateTask({ todolistId: task.todoListId, taskId: task.id, model }).then(() => {
+      setTasks({
+        ...tasks,
+        [task.todoListId]: tasks[task.todoListId].map((el) => (el.id === task.id ? { ...el, ...model } : el)),
+      })
+    })
+  }
 
   return (
     <div style={{ margin: "20px" }}>

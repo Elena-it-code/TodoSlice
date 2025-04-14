@@ -20,7 +20,7 @@ export type GetTasksResponse = {
   items: DomainTask[]
 }
 
-// тип для запроса обновления статуса Таски
+// тип для запроса обновления статуса Таски и Title(а)
 export type UpdateTaskModel = {
   description: string | null
   title: string
