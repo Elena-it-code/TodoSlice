@@ -1,4 +1,4 @@
-import { changeTodolistFilterAC, FilterValues, Todolist } from "@/features/todolists/model/todolists-reducer.ts"
+import { changeTodolistFilterAC, FilterValues, Todolist } from "@/features/todolists/model/todolists-slice.ts"
 import { Box } from "@mui/material"
 import Button from "@mui/material/Button"
 import { containerSx } from "@/common/styles"
