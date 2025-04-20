@@ -4,17 +4,14 @@ import { TodolistItem } from "@/features/todolists/ui/Todolists/TodolistItem/Tod
 import { selectTodolists } from "@/features/todolists/model/todolists-selectors.ts"
 import { useAppDispatch, useAppSelector } from "@/common/hooks"
 import { useEffect } from "react"
-import { todolistApi } from "@/features/todolists/api/todolistApi.ts"
-import { setTodolistsAC } from "@/features/todolists/model/todolists-slice.ts"
+import { setTodolists } from "@/features/todolists/model/todolists-slice.ts"
 
 export const Todolists = () => {
 	const todolists = useAppSelector(selectTodolists)
 	const dispatch = useAppDispatch()
 
 	useEffect(() => {
-		todolistApi.getTodolists().then((res) => {
-			dispatch(setTodolistsAC({ todolists: res.data }))
-		})
+		dispatch(setTodolists())
 	}, [])
 
 	return (
