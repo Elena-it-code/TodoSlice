@@ -6,9 +6,10 @@ import ListItem from "@mui/material/ListItem"
 import { changeTaskStatusAC, changeTaskTitleAC, deleteTaskAC } from "@/features/todolists/model/tasks-slice.ts"
 import type { ChangeEvent } from "react"
 import type { Task } from "@/features/todolists/model/tasks-slice.ts"
-import { Todolist } from "@/features/todolists/model/todolists-slice.ts"
+
 import { getListItemSx } from "./TaskItem.styles.ts"
 import { useAppDispatch } from "@/common/hooks"
+import { Todolist } from "@/features/todolists/api/todolistsApi.types.ts"
 
 type Props = {
 	task: Task
