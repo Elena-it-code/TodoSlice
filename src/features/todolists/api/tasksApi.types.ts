@@ -29,3 +29,13 @@ export type UpdateTaskModel = {
   startDate: string | null
   deadline: string | null
 }
+
+export type DeleteTaskArgs = {
+  todolistId: string
+  taskId: string
+}
+
+export type CreateTaskArgs = {
+  todolistId: string
+  title: string
+}
