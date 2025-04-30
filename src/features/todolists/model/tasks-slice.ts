@@ -4,6 +4,7 @@ import { tasksApi } from "@/features/todolists/api/tasksApi.ts"
 import { CreateTaskArgs, DeleteTaskArgs, DomainTask, UpdateTaskModel } from "@/features/todolists/api/tasksApi.types.ts"
 import { TaskStatus } from "@/common/enums"
 import { RootState } from "@/app/store.ts"
+import { setStatusAC } from "@/app/app-slice.ts"
 
 export const tasksSlice = createAppSlice({
   name: "tasks",
@@ -23,9 +24,12 @@ export const tasksSlice = createAppSlice({
     fetchTasksTC: create.asyncThunk(
       async (todolistId: string, thunkAPI) => {
         try {
+          thunkAPI.dispatch(setStatusAC({ status: "loading" }))
           const res = await tasksApi.getTasks(todolistId)
+          thunkAPI.dispatch(setStatusAC({ status: "succeeded" }))
           return { tasks: res.data.items, todolistId }
         } catch (error) {
+          thunkAPI.dispatch(setStatusAC({ status: "failed" }))
           return thunkAPI.rejectWithValue(null)
         }
       },
@@ -38,9 +42,12 @@ export const tasksSlice = createAppSlice({
     createTaskTC: create.asyncThunk(
       async (args: CreateTaskArgs, thunkAPI) => {
         try {
+          thunkAPI.dispatch(setStatusAC({ status: "loading" }))
           const res = await tasksApi.createTask(args)
+          thunkAPI.dispatch(setStatusAC({ status: "succeeded" }))
           return { task: res.data.data.item }
         } catch (error) {
+          thunkAPI.dispatch(setStatusAC({ status: "failed" }))
           return thunkAPI.rejectWithValue(null)
         }
       },
@@ -73,6 +80,7 @@ export const tasksSlice = createAppSlice({
       async (args: { todolistId: string; taskId: string; status: TaskStatus }, thunkAPI) => {
         const { todolistId, taskId, status } = args
         try {
+          thunkAPI.dispatch(setStatusAC({ status: "loading" }))
           const state = thunkAPI.getState() as RootState
           const tasks = state.tasks
           const tasksForTodolist = tasks[todolistId]
@@ -88,11 +96,13 @@ export const tasksSlice = createAppSlice({
               description: currentTask.description,
             }
             await tasksApi.updateTask({ todolistId, taskId, model })
+            thunkAPI.dispatch(setStatusAC({ status: "succeeded" }))
             return args
           } else {
             return thunkAPI.rejectWithValue(null)
           }
         } catch (error) {
+          thunkAPI.dispatch(setStatusAC({ status: "failed" }))
           return thunkAPI.rejectWithValue(null)
         }
       },
