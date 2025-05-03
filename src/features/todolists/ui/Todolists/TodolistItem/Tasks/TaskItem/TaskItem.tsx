@@ -3,7 +3,7 @@ import { EditableSpan } from "@/common/components"
 import IconButton from "@mui/material/IconButton"
 import DeleteIcon from "@mui/icons-material/Delete"
 import ListItem from "@mui/material/ListItem"
-import { changeTaskStatusTC, changeTaskTitleTC, deleteTaskTC } from "@/features/todolists/model/tasks-slice.ts"
+import { deleteTaskTC, updateTaskTC } from "@/features/todolists/model/tasks-slice.ts"
 import type { ChangeEvent } from "react"
 
 import { getListItemSx } from "./TaskItem.styles.ts"
@@ -27,12 +27,24 @@ export const TaskItem = ({ task, todolist }: Props) => {
   }
 
   const changeTaskStatus = (e: ChangeEvent<HTMLInputElement>) => {
-    const status = e.currentTarget.checked ? TaskStatus.Completed : TaskStatus.New
-    dispatch(changeTaskStatusTC({ todolistId: id, taskId: task.id, status }))
+    const newStatusValue = e.currentTarget.checked
+    dispatch(
+      updateTaskTC({
+        todolistId: id,
+        taskId: task.id,
+        domainModel: { status: newStatusValue ? TaskStatus.Completed : TaskStatus.New },
+      }),
+    )
   }
 
   const changeTaskTitle = (title: string) => {
-    dispatch(changeTaskTitleTC({ todolistId: id, taskId: task.id, title }))
+    dispatch(
+      updateTaskTC({
+        todolistId: id,
+        taskId: task.id,
+        domainModel: { title },
+      }),
+    )
   }
 
   const isTaskCompleted = task.status === TaskStatus.Completed
