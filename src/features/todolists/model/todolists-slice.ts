@@ -1,8 +1,9 @@
 import { Todolist } from "@/features/todolists/api/todolistsApi.types.ts"
 import { todolistApi } from "@/features/todolists/api/todolistApi.ts"
-import { createAppSlice } from "@/common/utils"
-import { setStatusAC } from "@/app/app-slice.ts"
+import { createAppSlice, handleServerAppError, handleServerNetworkError } from "@/common/utils"
+import { setAppStatusAC } from "@/app/app-slice.ts"
 import { RequestStatus } from "@/common/types"
+import { ResultCode } from "@/common/enums/enums.ts"
 
 export const todolistsSlice = createAppSlice({
   name: "todolists",
@@ -28,12 +29,12 @@ export const todolistsSlice = createAppSlice({
     fetchTodolistsTC: create.asyncThunk(
       async (_arg, { rejectWithValue, dispatch }) => {
         try {
-          dispatch(setStatusAC({ status: "loading" }))
+          dispatch(setAppStatusAC({ status: "loading" }))
           const res = await todolistApi.getTodolists()
-          dispatch(setStatusAC({ status: "succeeded" }))
+          dispatch(setAppStatusAC({ status: "succeeded" }))
           return { todolists: res.data }
         } catch (error) {
-          dispatch(setStatusAC({ status: "failed" }))
+          dispatch(setAppStatusAC({ status: "failed" }))
           return rejectWithValue(null)
         }
       },
@@ -48,12 +49,12 @@ export const todolistsSlice = createAppSlice({
     changeTodolistTitleTC: create.asyncThunk(
       async (args: { id: string; title: string }, { dispatch, rejectWithValue }) => {
         try {
-          dispatch(setStatusAC({ status: "loading" }))
+          dispatch(setAppStatusAC({ status: "loading" }))
           await todolistApi.changeTodolistTitle(args)
-          dispatch(setStatusAC({ status: "succeeded" }))
+          dispatch(setAppStatusAC({ status: "succeeded" }))
           return args
         } catch (error) {
-          dispatch(setStatusAC({ status: "failed" }))
+          dispatch(setAppStatusAC({ status: "failed" }))
           return rejectWithValue(null)
         }
       },
@@ -69,13 +70,13 @@ export const todolistsSlice = createAppSlice({
     deleteTodolistTC: create.asyncThunk(
       async (id: string, { dispatch, rejectWithValue }) => {
         try {
-          dispatch(setStatusAC({ status: "loading" }))
+          dispatch(setAppStatusAC({ status: "loading" }))
           dispatch(changeTodolistStatusAC({ id, entityStatus: "loading" }))
           await todolistApi.deleteTodolist(id)
-          dispatch(setStatusAC({ status: "succeeded" }))
+          dispatch(setAppStatusAC({ status: "succeeded" }))
           return { id }
         } catch (error) {
-          dispatch(setStatusAC({ status: "failed" }))
+          dispatch(setAppStatusAC({ status: "failed" }))
           dispatch(changeTodolistStatusAC({ id, entityStatus: "failed" }))
           return rejectWithValue(null)
         }
@@ -92,12 +93,22 @@ export const todolistsSlice = createAppSlice({
     createTodolistTC: create.asyncThunk(
       async (title: string, { dispatch, rejectWithValue }) => {
         try {
-          dispatch(setStatusAC({ status: "loading" }))
+          dispatch(setAppStatusAC({ status: "loading" }))
           const res = await todolistApi.createTodolist(title)
-          dispatch(setStatusAC({ status: "succeeded" }))
-          return { todolist: res.data.data.item }
+          if (res.data.resultCode === ResultCode.Success) {
+            dispatch(setAppStatusAC({ status: "succeeded" }))
+            return { todolist: res.data.data.item }
+          } else {
+            // dispatch(setAppStatusAC({ status: "failed" }))
+            // const error = res.data.messages.length ? res.data.messages[0] : "Some error occurred"
+            // dispatch(setAppErrorAC({ error }))
+            handleServerAppError(dispatch, res.data)
+            return rejectWithValue(null)
+          }
         } catch (error) {
-          dispatch(setStatusAC({ status: "failed" }))
+          // dispatch(setAppErrorAC({ error: error.message }))
+          // dispatch(setAppStatusAC({ status: "failed" }))
+          handleServerNetworkError(dispatch, error)
           return rejectWithValue(null)
         }
       },

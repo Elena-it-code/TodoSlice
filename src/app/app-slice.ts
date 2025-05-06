@@ -27,7 +27,7 @@ export const appSlice = createSlice({
 })
 
 export const appReducer = appSlice.reducer
-export const { changeThemeModeAC, setStatusAC, setAppErrorAC } = appSlice.actions
+export const { changeThemeModeAC, setStatusAC: setAppStatusAC, setAppErrorAC } = appSlice.actions
 export const { selectThemeMode, selectStatus, selectError } = appSlice.selectors
 
 export type ThemeMode = "dark" | "light"
