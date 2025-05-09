@@ -1,9 +1,9 @@
 import { createTodolistTC, deleteTodolistTC } from "./todolists-slice.ts"
-import { createAppSlice, handleServerNetworkError } from "@/common/utils"
+import { createAppSlice, handleServerAppError, handleServerNetworkError } from "@/common/utils"
 import { tasksApi } from "@/features/todolists/api/tasksApi.ts"
 import { CreateTaskArgs, DeleteTaskArgs, DomainTask, UpdateTaskModel } from "@/features/todolists/api/tasksApi.types.ts"
 import { RootState } from "@/app/store.ts"
-import { setAppErrorAC, setAppStatusAC } from "@/app/app-slice.ts"
+import { setAppStatusAC } from "@/app/app-slice.ts"
 import { ResultCode } from "@/common/enums/enums.ts"
 
 export const tasksSlice = createAppSlice({
@@ -21,7 +21,7 @@ export const tasksSlice = createAppSlice({
           thunkAPI.dispatch(setAppStatusAC({ status: "succeeded" }))
           return { tasks: res.data.items, todolistId }
         } catch (error) {
-          thunkAPI.dispatch(setAppStatusAC({ status: "failed" }))
+          handleServerNetworkError(thunkAPI.dispatch, error)
           return thunkAPI.rejectWithValue(null)
         }
       },
@@ -40,9 +40,7 @@ export const tasksSlice = createAppSlice({
             dispatch(setAppStatusAC({ status: "succeeded" }))
             return { task: res.data.data.item }
           } else {
-            dispatch(setAppStatusAC({ status: "failed" }))
-            const error = res.data.messages.length ? res.data.messages[0] : "Some error occurred"
-            dispatch(setAppErrorAC({ error }))
+            handleServerAppError(dispatch, res.data)
             return rejectWithValue(null)
           }
         } catch (error) {
@@ -60,18 +58,27 @@ export const tasksSlice = createAppSlice({
       async (args: DeleteTaskArgs, { dispatch, rejectWithValue }) => {
         try {
           dispatch(setAppStatusAC({ status: "loading" }))
-          await tasksApi.deleteTask(args)
-          dispatch(setAppStatusAC({ status: "succeeded" }))
-          return args
+          const res = await tasksApi.deleteTask(args)
+          if (res.data.resultCode === ResultCode.Success) {
+            dispatch(setAppStatusAC({ status: "succeeded" }))
+            return args // Возвращаем аргументы для редьюсера
+          } else {
+            handleServerAppError(dispatch, res.data)
+            return rejectWithValue(null)
+          }
         } catch (error) {
-          dispatch(setAppStatusAC({ status: "failed" }))
+          handleServerNetworkError(dispatch, error)
           return rejectWithValue(null)
         }
       },
       {
+        // код обработки редьюсера для deleteTaskTC
         fulfilled: (state, action) => {
+          // 1. Получаем массив задач для конкретного тудулиста
           const tasks = state[action.payload.todolistId]
+          // 2. Находим индекс удаляемой задачи в массиве
           const taskIndex = tasks.findIndex((task) => task.id === action.payload.taskId)
+          // 3. Проверяем, что задача найдена (индекс не -1)
           if (taskIndex !== -1) {
             tasks.splice(taskIndex, 1)
           }
@@ -104,10 +111,15 @@ export const tasksSlice = createAppSlice({
         try {
           dispatch(setAppStatusAC({ status: "loading" }))
           const res = await tasksApi.updateTask({ todolistId, taskId, model })
-          dispatch(setAppStatusAC({ status: "succeeded" }))
-          return { task: res.data.data.item }
+          if (res.data.resultCode === ResultCode.Success) {
+            dispatch(setAppStatusAC({ status: "succeeded" }))
+            return { task: res.data.data.item }
+          } else {
+            handleServerAppError(dispatch, res.data)
+            return rejectWithValue(null)
+          }
         } catch (error) {
-          dispatch(setAppStatusAC({ status: "failed" }))
+          handleServerNetworkError(dispatch, error)
           return rejectWithValue(null)
         }
       },

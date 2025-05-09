@@ -5,20 +5,19 @@ import DeleteIcon from "@mui/icons-material/Delete"
 import ListItem from "@mui/material/ListItem"
 import { deleteTaskTC, updateTaskTC } from "@/features/todolists/model/tasks-slice.ts"
 import type { ChangeEvent } from "react"
-
 import { getListItemSx } from "./TaskItem.styles.ts"
 import { useAppDispatch } from "@/common/hooks"
-import { Todolist } from "@/features/todolists/api/todolistsApi.types.ts"
 import { DomainTask } from "@/features/todolists/api/tasksApi.types.ts"
 import { TaskStatus } from "@/common/enums"
+import { DomainTodolist } from "@/features/todolists/model/todolists-slice.ts"
 
 type Props = {
   task: DomainTask
-  todolist: Todolist
+  todolist: DomainTodolist
 }
 
 export const TaskItem = ({ task, todolist }: Props) => {
-  const { id } = todolist
+  const { id, entityStatus } = todolist
 
   const dispatch = useAppDispatch()
 
@@ -48,13 +47,14 @@ export const TaskItem = ({ task, todolist }: Props) => {
   }
 
   const isTaskCompleted = task.status === TaskStatus.Completed
+  const disabled = entityStatus === "loading"
   return (
     <ListItem sx={getListItemSx(isTaskCompleted)}>
       <div>
-        <Checkbox checked={isTaskCompleted} onChange={changeTaskStatus} />
-        <EditableSpan value={task.title} onChange={changeTaskTitle} />
+        <Checkbox checked={isTaskCompleted} onChange={changeTaskStatus} disabled={disabled} />
+        <EditableSpan value={task.title} onChange={changeTaskTitle} disabled={disabled} />
       </div>
-      <IconButton onClick={deleteTask}>
+      <IconButton onClick={deleteTask} disabled={disabled}>
         <DeleteIcon />
       </IconButton>
     </ListItem>
