@@ -17,20 +17,22 @@ export const domainTaskSchema = z.object({
 })
 
 export type GetTasksResponse = {
-  error: string | null
+  error: Nullable<string>
   totalCount: number
   items: DomainTask[]
 }
 
 // тип для запроса обновления статуса Таски и Title(а)
 export type UpdateTaskModel = {
-  description: string | null
+  description: Nullable<string>
   title: string
   status: TaskStatus
   priority: TaskPriority
-  startDate: string | null
-  deadline: string | null
+  startDate: Nullable<string>
+  deadline: Nullable<string>
 }
+
+export type Nullable<T> = T | null
 
 export type DeleteTaskArgs = {
   todolistId: string

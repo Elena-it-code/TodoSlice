@@ -1,12 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { RequestStatus } from "@/common/types"
+import { Nullable } from "@/features/todolists/api/tasksApi.types.ts"
 
 export const appSlice = createSlice({
   name: "app",
   initialState: {
     themeMode: "light" as ThemeMode,
     status: "idle" as RequestStatus,
-    error: null as string | null,
+    error: null as Nullable<string>,
   },
   selectors: {
     selectThemeMode: (state) => state.themeMode,
@@ -20,7 +21,7 @@ export const appSlice = createSlice({
     setStatusAC: create.reducer<{ status: RequestStatus }>((state, action) => {
       state.status = action.payload.status // логика мутабельного изменения стейта при изменении status(a) Loader загрузки
     }),
-    setAppErrorAC: create.reducer<{ error: string | null }>((state, action) => {
+    setAppErrorAC: create.reducer<{ error: Nullable<string> }>((state, action) => {
       state.error = action.payload.error // логика мутабельного изменения стейта при выведении сообщения об ошибке
     }),
   }),
