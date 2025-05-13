@@ -5,7 +5,10 @@ export const LoginSchema = z.object({
     .string()
     .min(1, { message: "Email is required" })
     .regex(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/, { message: "Incorrect email address" }),
-  password: z.string().min(4, { message: "Must be 5 or more characters long" }),
+  password: z
+    .string()
+    .min(1, { message: "Password is required" })
+    .min(3, { message: "Password must be at least 3 characters long" }),
   rememberMe: z.boolean(),
 })
 
