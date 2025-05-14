@@ -10,15 +10,27 @@ import { containerSx } from "@/common/styles"
 import { NavButton } from "@/common/components"
 import { useAppDispatch, useAppSelector } from "@/common/hooks"
 import LinearProgress from "@mui/material/LinearProgress"
+import { logoutTC, selectIsLoggedIn } from "@/features/auth/model/auth-slice.ts"
+
+// Logout
+// 1. Header
+// Для выхода из приложения нужно доработать Header:
+//
+//   Удалите кнопки Sign in и Sign up, а вместо них вставьте кнопку Sign out;
+// Напишите логику отображения кнопки Sign out только когда пользователь залогинен:
 
 export const Header = () => {
   const themeMode = useAppSelector(selectThemeMode)
   const status = useAppSelector(selectStatus)
+  const isLoggedIn = useAppSelector(selectIsLoggedIn)
   const dispatch = useAppDispatch()
   const theme = getTheme(themeMode)
 
   const changeMode = () => {
     dispatch(changeThemeModeAC({ themeMode: themeMode === "light" ? "dark" : "light" }))
+  }
+  const logoutHandler = () => {
+    dispatch(logoutTC())
   }
 
   return (
@@ -29,8 +41,8 @@ export const Header = () => {
             <MenuIcon />
           </IconButton>
           <div>
-            <NavButton>Sign in</NavButton>
-            <NavButton>Sign up</NavButton>
+            {isLoggedIn && <NavButton onClick={logoutHandler}>Sign out</NavButton>}
+            {/*<NavButton>Sign up</NavButton>*/}
             <NavButton background={theme.palette.primary.dark}>Faq</NavButton>
             <Switch color={"default"} onChange={changeMode} />
           </div>
