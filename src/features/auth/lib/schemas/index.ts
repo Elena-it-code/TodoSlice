@@ -1,1 +1,1 @@
-export { LoginSchema, type LoginForm } from "./loginSchema.ts"
+export { LoginSchema, type Inputs } from "./loginSchema.ts"
