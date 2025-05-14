@@ -12,13 +12,6 @@ import { useAppDispatch, useAppSelector } from "@/common/hooks"
 import LinearProgress from "@mui/material/LinearProgress"
 import { logoutTC, selectIsLoggedIn } from "@/features/auth/model/auth-slice.ts"
 
-// Logout
-// 1. Header
-// Для выхода из приложения нужно доработать Header:
-//
-//   Удалите кнопки Sign in и Sign up, а вместо них вставьте кнопку Sign out;
-// Напишите логику отображения кнопки Sign out только когда пользователь залогинен:
-
 export const Header = () => {
   const themeMode = useAppSelector(selectThemeMode)
   const status = useAppSelector(selectStatus)
@@ -42,7 +35,6 @@ export const Header = () => {
           </IconButton>
           <div>
             {isLoggedIn && <NavButton onClick={logoutHandler}>Sign out</NavButton>}
-            {/*<NavButton>Sign up</NavButton>*/}
             <NavButton background={theme.palette.primary.dark}>Faq</NavButton>
             <Switch color={"default"} onChange={changeMode} />
           </div>
