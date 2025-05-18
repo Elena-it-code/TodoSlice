@@ -4,12 +4,18 @@ import { createAppSlice, handleServerAppError, handleServerNetworkError } from "
 import { setAppStatusAC } from "@/app/app-slice.ts"
 import { RequestStatus } from "@/common/types"
 import { ResultCode } from "@/common/enums/enums.ts"
+import { clearDataAC } from "@/common/actions"
 
 export const todolistsSlice = createAppSlice({
   name: "todolists",
   initialState: [] as DomainTodolist[],
   selectors: {
     selectTodolists: (state) => state,
+  },
+  extraReducers: (builder) => {
+    builder.addCase(clearDataAC, () => {
+      return []
+    })
   },
   reducers: (create) => ({
     // 🔵 actions
