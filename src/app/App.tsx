@@ -3,29 +3,31 @@ import { getTheme } from "@/common/theme"
 import { CircularProgress, CssBaseline } from "@mui/material"
 import { useAppDispatch, useAppSelector } from "@/common/hooks"
 import { Header } from "@/common/components"
-import { selectThemeMode } from "@/app/app-slice.ts"
+import { selectThemeMode, setIsLoggedInAC } from "@/app/app-slice.ts"
 import { ErrorSnackbar } from "@/common/components/ErrorSnackbar/ErrorSnackbar.tsx"
 import { Routing } from "@/common/routing"
-import { initializeAppTC } from "@/features/auth/model/auth-slice.ts"
 import { useEffect, useState } from "react"
 import styles from "./App.module.css"
+import { useMeQuery } from "@/features/auth/api/authApi.ts"
+import { ResultCode } from "@/common/enums/enums.ts"
 
 export const App = () => {
-  const [isInitialized, setIsInitialized] = useState<boolean>(false)
-
   const themeMode = useAppSelector(selectThemeMode)
-  const dispatch = useAppDispatch()
   const theme = getTheme(themeMode)
 
+  const dispatch = useAppDispatch()
+
+  const [isInitialized, setIsInitialized] = useState<boolean>(false)
+  const { data } = useMeQuery()
+
   useEffect(() => {
-    dispatch(initializeAppTC())
-      // unwrap() - метод, преобразует не обычный Promise в стандартный Promise
-      // Добавлен в RTK (начиная с версии 1.5.0)
-      .unwrap()
-      .finally(() => {
-        setIsInitialized(true)
-      })
-  }, [])
+    if (data) {
+      setIsInitialized(true)
+      if (data?.resultCode === ResultCode.Success) {
+        dispatch(setIsLoggedInAC({ isLoggedIn: true }))
+      }
+    }
+  }, [data])
 
   if (!isInitialized) {
     return (

@@ -13,4 +13,4 @@ export const LoginSchema = z.object({
   captcha: z.string().optional(),
 })
 
-export type Inputs = z.infer<typeof LoginSchema>
+export type LoginArgs = z.infer<typeof LoginSchema>
