@@ -3,6 +3,7 @@ import { AUTH_TOKEN } from "@/common/constants"
 
 export const baseApi = createApi({
   reducerPath: "todolistApi",
+  tagTypes: ["Todolist", "Task"],
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_BASE_URL,
     prepareHeaders: (headers) => {
@@ -10,6 +11,5 @@ export const baseApi = createApi({
       headers.set("Authorization", `Bearer ${localStorage.getItem(AUTH_TOKEN)}`)
     },
   }),
-  tagTypes: ["Todolist"],
   endpoints: () => ({}), // убрать нельзя, endpoints - ОБЯЗАТЕЛЬНОЕ СВОЙСТВО, так и сотавляем пустым свойством
 })

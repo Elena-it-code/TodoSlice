@@ -3,13 +3,13 @@ import { EditableSpan } from "@/common/components"
 import IconButton from "@mui/material/IconButton"
 import DeleteIcon from "@mui/icons-material/Delete"
 import ListItem from "@mui/material/ListItem"
-import { deleteTaskTC, updateTaskTC } from "@/features/todolists/model/tasks-slice.ts"
 import type { ChangeEvent } from "react"
 import { getListItemSx } from "./TaskItem.styles.ts"
-import { useAppDispatch } from "@/common/hooks"
 import { DomainTask } from "@/features/todolists/api/tasksApi.types.ts"
 import { TaskStatus } from "@/common/enums"
 import { DomainTodolist } from "@/features/todolists/model/todolists-slice.ts"
+import { useDeleteTaskMutation, useUpdateTaskMutation } from "@/features/todolists/api/tasksApi.ts"
+import { createTaskModel } from "@/features/todolists/lib/utils"
 
 type Props = {
   task: DomainTask
@@ -17,44 +17,33 @@ type Props = {
 }
 
 export const TaskItem = ({ task, todolist }: Props) => {
-  const { id, entityStatus } = todolist
+  const [updateTask] = useUpdateTaskMutation()
+  const [deleteTask] = useDeleteTaskMutation()
 
-  const dispatch = useAppDispatch()
-
-  const deleteTask = () => {
-    dispatch(deleteTaskTC({ todolistId: id, taskId: task.id }))
+  const deleteTaskHandler = () => {
+    deleteTask({ todolistId: todolist.id, taskId: task.id })
   }
 
   const changeTaskStatus = (e: ChangeEvent<HTMLInputElement>) => {
-    const newStatusValue = e.currentTarget.checked
-    dispatch(
-      updateTaskTC({
-        todolistId: id,
-        taskId: task.id,
-        domainModel: { status: newStatusValue ? TaskStatus.Completed : TaskStatus.New },
-      }),
-    )
+    const status = e.currentTarget.checked ? TaskStatus.Completed : TaskStatus.New
+    const model = createTaskModel(task, { status })
+    updateTask({ taskId: task.id, todolistId: todolist.id, model })
   }
 
   const changeTaskTitle = (title: string) => {
-    dispatch(
-      updateTaskTC({
-        todolistId: id,
-        taskId: task.id,
-        domainModel: { title },
-      }),
-    )
+    const model = createTaskModel(task, { title })
+    updateTask({ taskId: task.id, todolistId: todolist.id, model })
   }
 
   const isTaskCompleted = task.status === TaskStatus.Completed
-  const disabled = entityStatus === "loading"
+  const disabled = todolist.entityStatus === "loading"
   return (
     <ListItem sx={getListItemSx(isTaskCompleted)}>
       <div>
         <Checkbox checked={isTaskCompleted} onChange={changeTaskStatus} disabled={disabled} />
         <EditableSpan value={task.title} onChange={changeTaskTitle} disabled={disabled} />
       </div>
-      <IconButton onClick={deleteTask} disabled={disabled}>
+      <IconButton onClick={deleteTaskHandler} disabled={disabled}>
         <DeleteIcon />
       </IconButton>
     </ListItem>
