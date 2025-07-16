@@ -19,12 +19,14 @@ export const todolistsSlice = createAppSlice({
   },
   reducers: (create) => ({
     // 🔵 actions
+    // ✅✅✅
     changeTodolistFilterAC: create.reducer<{ id: string; filter: FilterValues }>((state, action) => {
       const index = state.findIndex((todolist) => todolist.id === action.payload.id)
       if (index !== -1) {
         state[index].filter = action.payload.filter
       }
     }),
+    // ✅✅✅
     changeTodolistStatusAC: create.reducer<{ id: string; entityStatus: RequestStatus }>((state, action) => {
       const index = state.findIndex((todolist) => todolist.id === action.payload.id)
       if (index !== -1) {

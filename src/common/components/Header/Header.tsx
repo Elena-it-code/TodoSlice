@@ -13,6 +13,7 @@ import LinearProgress from "@mui/material/LinearProgress"
 import { useLogoutMutation } from "@/features/auth/api/authApi.ts"
 import { ResultCode } from "@/common/enums/enums.ts"
 import { AUTH_TOKEN } from "@/common/constants"
+import { baseApi } from "@/app/baseApi.ts"
 
 export const Header = () => {
   const themeMode = useAppSelector(selectThemeMode)
@@ -27,12 +28,17 @@ export const Header = () => {
     dispatch(changeThemeModeAC({ themeMode: themeMode === "light" ? "dark" : "light" }))
   }
   const logoutHandler = () => {
-    logout().then((res) => {
-      if (res.data?.resultCode === ResultCode.Success) {
-        localStorage.removeItem(AUTH_TOKEN) // удалем token
-        dispatch(setIsLoggedInAC({ isLoggedIn: false }))
-      }
-    })
+    logout()
+      .then((res) => {
+        if (res.data?.resultCode === ResultCode.Success) {
+          localStorage.removeItem(AUTH_TOKEN) // удалем token
+          dispatch(setIsLoggedInAC({ isLoggedIn: false }))
+        }
+      })
+      .then(() => {
+        //dispatch(baseApi.util.resetApiState()) // зачищаем полностью весь стейт
+        dispatch(baseApi.util.invalidateTags(["Task", "Todolist"])) // зачищаем именено Task(и) и Todolist(ы)
+      })
   }
 
   return (
