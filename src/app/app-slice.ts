@@ -1,6 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, isFulfilled, isPending, isRejected } from "@reduxjs/toolkit"
 import { RequestStatus } from "@/common/types"
 import { Nullable } from "@/features/todolists/api/tasksApi.types.ts"
+import { todolistApi } from "@/features/todolists/api/todolistApi.ts"
+import { tasksApi } from "@/features/todolists/api/tasksApi.ts"
 
 export const appSlice = createSlice({
   name: "app",
@@ -34,6 +36,24 @@ export const appSlice = createSlice({
       state.isLoggedIn = action.payload.isLoggedIn // редюсер, который обновляет isLoggedIn в состоянии хранилища на основе переданного значения
     }),
   }),
+  extraReducers: (builder) => {
+    builder
+      .addMatcher(isPending, (state, action) => {
+        if (
+          todolistApi.endpoints.getTodolists.matchPending(action) ||
+          tasksApi.endpoints.getTasks.matchPending(action)
+        ) {
+          return
+        }
+        state.status = "loading"
+      })
+      .addMatcher(isFulfilled, (state) => {
+        state.status = "succeeded"
+      })
+      .addMatcher(isRejected, (state) => {
+        state.status = "failed"
+      })
+  },
 })
 
 export const appReducer = appSlice.reducer
